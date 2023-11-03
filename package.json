@@ -12,7 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
-    "nanoid": "^3.3.6"
+    "moment-timezone": "^0.5.43",
+    "nanoid": "^3.3.6",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "eslint": "^8.52.0",

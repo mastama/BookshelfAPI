@@ -1,8 +1,9 @@
 const { nanoid } = require("nanoid");
 const books = require("./books");
+const logger = require("./logger");
 
 const addBookHandler = (request, h) => {
-    console.log("Start proses membuat buku")
+    logger.info("Start proses membuat buku")
     const {name, 
         year, 
         author, 
@@ -34,7 +35,6 @@ const addBookHandler = (request, h) => {
 
     // masukan payload kedalam array books
     books.push(newBooks);
-    console.log("TROUBLESHOOT: ", newBooks)
 
     try {
         if (name === undefined || name === null || name === "") {
@@ -43,7 +43,9 @@ const addBookHandler = (request, h) => {
                 message: "Gagal menambahkan buku. Mohon isi nama buku",
             });
             response.code(400);
-            console.error("Gagal menambahkan buku. Mohon isi nama buku");
+            logger.error("Gagal menambahkan buku. Mohon isi nama buku", {
+                name: newBooks.name
+            });
             return response;
         } else if (readPage > pageCount) {
             const response = h.response({
@@ -51,7 +53,10 @@ const addBookHandler = (request, h) => {
                 message: "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount",
             });
             response.code(400);
-            console.error("Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount")
+            logger.error("Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount", {
+                readPage: newBooks.readPage,
+                pageCount: newBooks.pageCount
+            });
             return response;
         } else {
             const response = h.response({
@@ -62,10 +67,13 @@ const addBookHandler = (request, h) => {
                 },
             });
             response.code(201);
-            console.log("End proses membuat buku")
+            logger.info("End proses membuat buku", {
+                bookId: newBooks.bookId
+            })
             return response;
         }
     } catch (error) {
+        logger.error("Terjadi error:", error);
         throw error;
     }
 }
