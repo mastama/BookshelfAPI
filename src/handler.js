@@ -105,5 +105,40 @@ const getAllBookHandler = (_, h) => {
     }
 };
 
+const getBookByIdHandler = (request, h) => {
+    logger.info("Start proses menampilkan buku berdasarkan id")
+    const {id} = request.params;
+    const book = books.filter((book) => book.id === id)[0];
 
-module.exports = {addBookHandler, getAllBookHandler}
+    try {
+        if (book !== undefined) {
+            const response = h.response({
+                status: "success",
+                data: {
+                    book,
+                }
+            })
+            response.code(200);
+            logger.info("menampilkan buku byId: ", book);
+            logger.info("End proses menampilkan buku berdasarakan id", {id: id});
+
+            return response;
+        } else {
+            const response = h.response({
+                status: "fail",
+                message: "Buku tidak ditemukan"
+            })
+            response.code(404);
+            logger.info("Buku dengan id tidak ditemukan: ", {id: id});
+            logger.info("End proses menampilkan buku berdasarakan id: ", {id: id});
+
+            return response;
+        }
+    } catch (error) {
+        logger.info("Terjadi error: ", error)
+        throw error;
+    }
+}
+
+
+module.exports = {addBookHandler, getAllBookHandler, getBookByIdHandler}
