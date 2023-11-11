@@ -83,16 +83,32 @@ const addBookHandler = (request, h) => {
 const getAllBookHandler = (request, h) => {
     logger.info("Start proses menampilkan seluruh buku")
     try {
-        const simplifiedBooks = books.map(book => ({
-            id: book.id,
-            name: book.name,
-            publisher: book.publisher
-        }));
+
+        const {name, reading, finished} = request.query;
+        let simplifiedBooks = books;
+
+        if (name) {
+            simplifiedBooks = simplifiedBooks.filter(book => book.name && book.name.toLowerCase().includes(name.toLowerCase()));
+        }
+
+        if (reading != null) {
+            const isReading = reading === '1';
+            simplifiedBooks =  simplifiedBooks.filter(book => book.reading === isReading);
+        }
+
+        if (finished != null) {
+            const isFinished = finished === '1';
+            simplifiedBooks = simplifiedBooks.filter(book => book.finished === isFinished);
+        }
 
         const response = h.response({
             status: "success",
             data: {
-                books: simplifiedBooks
+                books: simplifiedBooks.map((book) => ({
+                    id: book.id,
+                    name: book.name,
+                    publisher: book.publisher
+                }))
             }
         }).code(200);
 
