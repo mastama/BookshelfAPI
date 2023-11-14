@@ -34,9 +34,6 @@ const addBookHandler = (request, h) => {
         updatedAt
     };
 
-    // masukan payload kedalam array books
-    books.push(newBooks);
-
     try {
         if (name === undefined || name === null || name === "") {
             const response = h.response({
@@ -48,7 +45,8 @@ const addBookHandler = (request, h) => {
                 name: newBooks.name
             });
             return response;
-        } else if (readPage > pageCount) {
+        }
+        if (readPage > pageCount) {
             const response = h.response({
                 status: "fail",
                 message: "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount",
@@ -58,8 +56,15 @@ const addBookHandler = (request, h) => {
                 readPage: newBooks.readPage,
                 pageCount: newBooks.pageCount
             });
-            return response;
-        } else {
+            return response; 
+        }
+
+        // masukan payload kedalam array books
+        books.push(newBooks);
+
+        const isSuccess = books.filter((book) => book.id === id).length > 0;
+
+        if (isSuccess) {
             const response = h.response({
                 status: "success",
                 message: "Buku berhasil ditambahkan",
